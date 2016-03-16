@@ -1,0 +1,6 @@
+Les commandes:
+Pour récup toute les modif si il y en a: git add -A; git commit -m "le_message"; git pull;
+
+Pour push les modif (mettre à jour le dépôt): git add -A; git commit -m "le_message"; git push;
+
+git log : Pour voir les heures de push 
