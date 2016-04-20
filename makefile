@@ -5,10 +5,10 @@ EXEC=projet  #Nom du programme à modifier
 
 all: ${EXEC}
 
-${EXEC}: affichage_hex.o
+${EXEC}: affichage_hex.o ${LDFLAGS}
 	${CPP} $(CFLAGS) -o ${EXEC} affichage_hex.o ${LDFLAGS}
 
-$affichage_hex.o: $affichage_hex.c
+$affichage_hex.o: $affichage_hex.c ${LDFLAGS}
 	${CPP} $(CFLAGS) -o $affichage_hex.o -c $affichage_hex.c ${LDFLAGS}
 
 

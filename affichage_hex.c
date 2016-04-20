@@ -5,11 +5,10 @@
 #define WINWI 800 // window width
 #define PLATHI 300 // hauteur du plateau
 #define PLATWI 340 //largement du plateau
+#define HIHEX 30 //hauteur d'un hexagone
+#define WIHEX 30 //largeur d'un hexagone
 
-typedef struct
-{
-    int h, w;
-}Dimensions;
+
 
 
 
@@ -109,6 +108,46 @@ int Placer_Pion(int x, int y, char joueur, int posPlatx, int posPlaty)
             
         }
     }
+}
+
+CoordonneesPlateau CoordSurfaceToPlateau(CoordonneesSurface p)
+{
+	CoordonneesPlateau cp;
+	int x=p.x-280;
+	int y=p.y-100;
+	int a=WIHEX;
+	int b=HIHEX;
+	int r=a/2;
+	int s=r/cos(30);
+	int h=(b-s)/2;
+	int c=(int)(x/(2*r));
+	int l=(int)(y/(h+s));
+	int x2=x-l*(2*r);
+	int y2=c-c*(h+s);
+	if(l%2==0)
+	{
+		if(y2<x2*(h/r)-h)
+		{
+			c++;
+			l--;
+		}
+		else if(y2<-x2*(h/r)+h)	l--;
+	}
+	else
+	{
+		if(x2>r)
+		{
+			if(y2<2*h-x2*(h/r))	l--;
+		}
+		else
+		{
+			if(y2<x2*(h/r))l--;
+			else c--;
+		}
+	}
+	cp.c=c;
+	cp.l=l;
+	return cp;
 }
  
 int main(int argc, char *argv[])
