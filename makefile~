@@ -1,5 +1,5 @@
 CPP=gcc    #Commande du compilateur
-CFLAGS=`sdl-config --cflags` #Option d'optimisation du programme
+CFLAGS=`dl-config --cflags` #Option d'optimisation du programme
 LDFLAGS=`sdl-config --libs` -lSDL_image -lSDL_ttf
 EXEC=projet  #Nom du programme à modifier
 

@@ -1,0 +1,21 @@
+CC=gcc
+OPT=-Wall
+EXEC=execut
+
+all: $(EXEC)
+
+#compile fonctionnalite.c
+fonctionnalite_prog.o: fonctionnalite_prog.c
+	$(CC) -o fonctionnalite_prog.o -c fonctionnalite_prog.c $(OPT)
+
+#compile main
+main.o: main.c
+	$(CC) -o main.o -c main.c $(OPT)
+
+#link main avec  et fonctionnalite_prog
+$(EXEC): main.o fonctionnalite_prog.o
+	$(CC) main.o fonctionnalite_prog.o -o $(EXEC)
+
+
+clean:
+	rm -rf *.o
