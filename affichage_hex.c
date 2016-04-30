@@ -1,5 +1,6 @@
 #include "affichage_hex.h"
 
+#define PI 3.14159265
  
 #define WINHI 600 // window height
 #define WINWI 800 // window width
@@ -82,59 +83,91 @@ SDL_Surface* Afficher_Plateau(char** grille, int dimX, int dimY, Uint32 initflag
     return ecran;
 }
 
-void Afficher_Pion(int x, int y, char joueur, SDL_Surface *ecran)
+void Afficher_Pion(CoordonneesSurface p, char joueur, SDL_Surface *ecran)
 {
     // affichage du pion bleu
     SDL_Surface *pion;
     if(joueur=='R') pion = IMG_Load("Images/button-red22.png");
     else pion = IMG_Load("Images/button-blue22.png");
     SDL_Rect posPion;               
-    posPion.x = x;
-    posPion.y = y;
+    posPion.x = p.x;
+    posPion.y = p.y;
     SDL_BlitSurface(pion,NULL,ecran,&posPion);
     SDL_FreeSurface(pion);
     SDL_Flip(ecran);
 }
 
-int Placer_Pion(int x, int y, char joueur, int posPlatx, int posPlaty)
+int Placer_Pion(CoordonneesSurface p, char joueur, SDL_Surface *ecran)
 {
     // Verifier si les coordonnées se situe bien dans le plateau
-    int i, j;
+    CoordonneesPlateau c;
+    c=CoordSurfaceToPlateau(p);
+    if(c.c<0 || c.c>10 || c.l>10 || c.l<0) return 1;
+    // FAIRE LA VERIF GRACE AUX REGLES
+        //APPEL DES FONCTIONS
+    //########
+    p=CoordPlateauToSurface(c);
+    p.x-=13;
+    p.y-=13-0.25*c.l;
+    Afficher_Pion(p, joueur, ecran);
+    return 0;
+}
 
-    for(i=0; i<11;i++)
-    {
-        for(j=0; j<11;i++)
-        {
-            
-        }
-    }
+CoordonneesSurface CoordPlateauToSurface(CoordonneesPlateau p)
+{
+    CoordonneesSurface cp;
+    int a=WIHEX;
+    int b=HIHEX;
+    float r=a/2;
+    float s=r/cos(30* PI / 180);
+    float h=(b-s)/2;
+    int x=r+p.c*2*r+r*p.l;
+    int y=p.l*(h+s)+h+s/2+(p.l+0.25*p.l);
+
+    cp.x=x+300;
+    cp.y=y+120;
+    return cp;
 }
 
 CoordonneesPlateau CoordSurfaceToPlateau(CoordonneesSurface p)
 {
 	CoordonneesPlateau cp;
-	int x=p.x-280;
-	int y=p.y-100;
+	int x=p.x-300;
+	int y=p.y-120;
 	int a=WIHEX;
 	int b=HIHEX;
-	int r=a/2;
-	int s=r/cos(30);
-	int h=(b-s)/2;
-	int c=(int)(x/(2*r));
-	int l=(int)(y/(h+s));
-	int x2=x-l*(2*r);
-	int y2=c-c*(h+s);
+	float r=a/2;
+	float s=r/cos(30* PI / 180);
+	float h=(b-s)/2;
+    // printf("%f", y/(h+s));
+	int l=(int)((y/(h+s))-(0.06*(int)(y/(h+s))));
+    int c=(int)(x/(2*r));
+    if(l%2==0)c-=0.5*l;
+    else c-=0.5*l-0.5;
+
+	float x2;
+    if(l%2!=0)x2=(x-(0.5*(l-1))*(a))-(a*c);
+    else x2=(x-(0.5*l)*(a))-(a*c);
+	float y2=(y-l*(h+s));
+
 	if(l%2==0)
 	{
+
 		if(y2<x2*(h/r)-h)
 		{
+
 			c++;
 			l--;
 		}
-		else if(y2<-x2*(h/r)+h)	l--;
+		else if(y2<-x2*(h/r)+h){
+			l--;
+
+		}
+
 	}
 	else
 	{
+
 		if(x2>r)
 		{
 			if(y2<2*h-x2*(h/r))	l--;
@@ -145,6 +178,7 @@ CoordonneesPlateau CoordSurfaceToPlateau(CoordonneesSurface p)
 			else c--;
 		}
 	}
+
 	cp.c=c;
 	cp.l=l;
 	return cp;
@@ -165,9 +199,15 @@ int main(int argc, char *argv[])
     //Initialisation et affichage du plateau
     SDL_Surface *ecran=Afficher_Plateau(NULL, WINHI, WINWI, initflags);
     // Affichege du pion rouge
-    Afficher_Pion(543, 273, 'R', ecran);
+    CoordonneesSurface posPionRouge;
+    posPionRouge.x=543;
+    posPionRouge.y=273;
+    Afficher_Pion(posPionRouge, 'R', ecran);
     // affichage du pion bleu
-    Afficher_Pion(377, 149, 'B', ecran);
+    CoordonneesSurface posPionBleu;
+    posPionBleu.x=377;
+    posPionBleu.y=149;
+    Afficher_Pion(posPionBleu, 'B', ecran);
 
     SDL_Flip(ecran);
  
@@ -191,8 +231,11 @@ int main(int argc, char *argv[])
                     {   
                         int clicX = event.motion.x;
                         int clicY = event.motion.y;
-                        Afficher_Pion(clicX, clicY, 'B', ecran);
-                        printf("X=%d Y=%d\n",clicX,clicY); // on récupère les coordonnées du clic
+                        CoordonneesSurface c;
+                        CoordonneesPlateau p;
+                        c.x=clicX;
+                        c.y=clicY;
+                        Placer_Pion(c, 'B', ecran);
                     }
                     break;
                 case SDL_KEYDOWN:

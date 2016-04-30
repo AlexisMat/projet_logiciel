@@ -7,10 +7,10 @@
 #include <math.h>
 #include <stdbool.h>
  
-#include <SDL.h>
-#include <SDL_keysym.h>
-#include <SDL_image.h>
-#include <SDL_ttf.h>
+#include <SDL/SDL.h>
+#include <SDL/SDL_keysym.h>
+#include <SDL/SDL_image.h>
+#include <SDL/SDL_ttf.h>
 
 typedef struct
 {
@@ -25,9 +25,10 @@ typedef struct
 typedef CoordonneesSurface CoordonneesPlateau;
 
 SDL_Surface* Afficher_Plateau(char** grille, int dimX, int dimY, Uint32 initflags);
-void Afficher_Pion(int x, int y, char joueur, SDL_Surface *ecran);
-int Placer_Pion(int x, int y, char joueur, int posPlatx, int posPlaty);
+void Afficher_Pion(CoordonneesSurface p, char joueur, SDL_Surface *ecran);
+int Placer_Pion(CoordonneesSurface p, char joueur, SDL_Surface *ecran);
 CoordonneesPlateau CoordSurfaceToPlateau(CoordonneesSurface c);
+CoordonneesSurface CoordPlateauToSurface(CoordonneesPlateau p);
 
 
 
