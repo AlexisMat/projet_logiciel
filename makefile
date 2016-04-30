@@ -1,6 +1,11 @@
 CPP=gcc    #Commande du compilateur
+
 CFLAGS=-O3 #Option d'optimisation du programme
 LDFLAGS=`sdl-config --cflags --libs` -lSDL_image -lSDL_ttf -lm
+
+CFLAGS=`sdl-config --cflags` #Option d'optimisation du programme
+LDFLAGS=`sdl-config --libs` -lSDL_image -lSDL_ttf
+
 EXEC=projet  #Nom du programme à modifier
 
 all: ${EXEC}
