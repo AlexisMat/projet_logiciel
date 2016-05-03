@@ -1,16 +1,26 @@
 #ifndef hex
 #define hex
 
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
-#include <math.h>
-#include <stdbool.h>
- 
 #include <SDL/SDL.h>
 #include <SDL/SDL_keysym.h>
 #include <SDL/SDL_image.h>
 #include <SDL/SDL_ttf.h>
+
+#include "regle.h"
+
+
+
+#define PI 3.14159265
+ 
+#define WINHI 600 // window height
+#define WINWI 800 // window width
+#define PLATHI 300 // hauteur du plateau
+#define PLATWI 340 //largement du plateau
+#define HIHEX 30 //hauteur d'un hexagone
+#define WIHEX 30 //largeur d'un hexagone
+
+
+
 
 typedef struct
 {
