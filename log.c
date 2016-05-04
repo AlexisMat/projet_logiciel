@@ -25,6 +25,14 @@ void affiche_plateau(char (*plateau)[TAILLE_MAX]){
 		printf("\n");
 	}
 }
+
+void maj_plateau(char (*plateau)[TAILLE_MAX], int x, int y, char joueur)
+{
+	plateau[x][y]=joueur;
+}
+
+
+
 int rand_a_b(){
 	int j;
 	srand(time(NULL));

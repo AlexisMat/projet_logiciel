@@ -14,39 +14,91 @@
 
 
 
-void Afficher_Bouton(int posx, int posy, char* bouton,  Uint32 initflags, SDL_Surface *ecran)
+void Afficher_joueur(char joueur, Uint32 couleur, Uint32 initflags, SDL_Surface *ecran)
 {
-    SDL_Surface *surface_bouton, *texte1;
+    SDL_Surface *background;
     SDL_Rect posTexte1, position;
-    position.x=posx;
+    char* tour_joueur;
+    if(joueur=='B')tour_joueur="C'est au joueur BLEU de jouer !";
+    else tour_joueur="C'est au joueur ROUGE de jouer !";
+    position.x=350;
+    position.y=420;
     posTexte1.x=position.x+5;
     posTexte1.y=position.y+5;
 
 
     Uint8  video_bpp = 32; // 32 bits de couleur
-    Uint32 rouge;
-    rouge = SDL_MapRGB(ecran->format,255,0,0); // c'est du rouge
     
-    TTF_Font *fontsurface_bouton = TTF_OpenFont("CAC-Champagne/cac_champagne.ttf",40); 
+
+    background = SDL_CreateRGBSurface(initflags,500,40,video_bpp,0,0,0,0); 
+    SDL_FillRect(background,NULL,couleur);
+
+    SDL_BlitSurface(background, NULL, ecran, &position);
+    Afficher_Texte(position.x+5, position.y+5, 20, tour_joueur, ecran);
+    SDL_FreeSurface(background);
+
+
+}
+
+void Afficher_Texte(int posx, int posy, int taille, char* texte, SDL_Surface *ecran)
+{
+    SDL_Surface *texte1;
+    SDL_Rect posTexte;
+    posTexte.x=posx;
+    posTexte.y=posy;
+
+    TTF_Font *font = TTF_OpenFont("font/FFF_Tusj.ttf",taille); 
     SDL_Color fontBlack = {0,0,0};
-    texte1 = TTF_RenderText_Blended(fontsurface_bouton,bouton,fontBlack);
+    texte1 = TTF_RenderText_Blended(font,texte,fontBlack);
+    SDL_BlitSurface(texte1, NULL, ecran, &posTexte);
+    SDL_FreeSurface(texte1);
+    TTF_CloseFont(font);
+}
+
+void Afficher_Bouton(int posx, int posy, char* bouton, Uint32 couleur,  Uint32 initflags, SDL_Surface *ecran)
+{
+    SDL_Surface *surface_bouton;
+    SDL_Rect posTexte1, position;
+    position.x=posx;
+    position.y=posy;
+    posTexte1.x=position.x+5;
+    posTexte1.y=position.y+5;
+
+
+    Uint8  video_bpp = 32; // 32 bits de couleur
+    
 
     surface_bouton = SDL_CreateRGBSurface(initflags,150,50,video_bpp,0,0,0,0); 
-    SDL_FillRect(surface_bouton,NULL,rouge);
+    SDL_FillRect(surface_bouton,NULL,couleur);
 
     SDL_BlitSurface(surface_bouton, NULL, ecran, &position);
-    SDL_BlitSurface(texte1, NULL, ecran, &posTexte1);
-    SDL_FreeSurface(texte1);
+    Afficher_Texte(position.x+5, position.y+5, 40, bouton, ecran);
+
     SDL_FreeSurface(surface_bouton);
-    TTF_CloseFont(fontsurface_bouton);
+    
 
 }
 
 
-
-SDL_Surface* Afficher_Plateau(char** grille, int dimX, int dimY, Uint32 initflags)
+int position_Clique(CoordonneesSurface c)
 {
-    
+    if(c.x>20 && c.x<170)
+    {
+        if(c.y>100 && c.y<150)return NOUVEAU_JEU;
+        if(c.y>200 && c.y<250)return SAUVEGARDER;
+        if(c.y>300 && c.y<350)return CHARGER;
+        if(c.y>400 && c.y<450)return QUITTER;
+    }
+    if(c.x>600 && c.x<750 && c.y>500 && c.y<550)return UNDO;
+    if(c.x>280 && c.x<800 && c.y>100 && c.y<400)return JOUER;
+}
+
+
+SDL_Surface* Afficher_Plateau(char (*grille)[TAILLE_MAX], int dimX, int dimY, Uint32 initflags)
+{
+    int i;
+    int j;
+    CoordonneesPlateau cp;
     SDL_Surface *ecran, *board; // quelques surfaces
 
     Dimensions fenetre; // main window
@@ -58,7 +110,7 @@ SDL_Surface* Afficher_Plateau(char** grille, int dimX, int dimY, Uint32 initflag
 
     Uint32 videoflags = SDL_HWSURFACE; // utiliser la mémoire vidéo
 
-    Uint32 vert; // des variables pour des couleurs   
+    Uint32 couleurBackground, rouge; // des variables pour des couleurs   
  
     /* Set video mode */
     ecran = SDL_SetVideoMode(fenetre.w, fenetre.h, video_bpp, videoflags); // surface principale
@@ -70,13 +122,23 @@ SDL_Surface* Afficher_Plateau(char** grille, int dimX, int dimY, Uint32 initflag
         exit(2);
     }
 
-    vert = SDL_MapRGB(ecran->format,0,128,0); // c'est du vert
+    couleurBackground = SDL_MapRGB(ecran->format,51,51,102); // c'est la couleur du couleurBackground
     
 
-    SDL_FillRect(ecran,NULL,vert); // de la couleur dans le fond de la fenêtre principale
+    SDL_FillRect(ecran,NULL,couleurBackground); // de la couleur dans le fond de la fenêtre principale
     SDL_WM_SetCaption("Jeu de Hex", NULL); // legende de la fenêtre
 
-    Afficher_Bouton(20, 80, "NEW", initflags, ecran);
+    rouge = SDL_MapRGB(ecran->format,153,0,0); // c'est du rouge
+
+    Afficher_Bouton(20, 100, "NEW", rouge, initflags, ecran);
+    Afficher_Bouton(20, 200, "SAVE", rouge, initflags, ecran);
+    Afficher_Bouton(20, 300, "LOAD", rouge, initflags, ecran);
+    Afficher_Bouton(20, 400, "QUIT", rouge, initflags, ecran);
+    Afficher_Bouton(600, 500, "UNDO", rouge, initflags, ecran);
+
+    Afficher_Texte(200, 5, 60, "JEU DE HEX",ecran);
+    Afficher_Texte(280, 70, 10, "MOURAREAU - MATEO - TILHAC",ecran);
+
 
     // Affichage du plateau de jeu
     board = IMG_Load("Images/hex.png");    // plateau de jeu la taille en pixels est celle de l'image
@@ -85,7 +147,23 @@ SDL_Surface* Afficher_Plateau(char** grille, int dimX, int dimY, Uint32 initflag
     posBoard.y = 100;
     SDL_BlitSurface(board,NULL,ecran,&posBoard); // on l'associe avec la surface principale
 
+    if(grille!=NULL)
+    {
+        for(i=0;i<TAILLE_MAX;i++)
+        {
+            for(j=0;j<TAILLE_MAX;j++)
+            {
+                if(grille[i][j]!='.')
+                {
+                    cp.l=i;
+                    cp.c=j;
+                    Placer_Pion(CoordPlateauToSurface(cp),grille[i][j], ecran);
+                }
+            }
+        }
+    }
     /* Clean up the SDL library */
+    SDL_Flip(ecran);
     SDL_FreeSurface(board);
 
     return ecran;
@@ -100,7 +178,7 @@ void Afficher_Pion(CoordonneesSurface p, char joueur, SDL_Surface *ecran)
 {
     // affichage du pion bleu
     SDL_Surface *pion;
-    if(joueur=='R') pion = IMG_Load("Images/button-red22.png");
+    if(joueur=='R')pion = IMG_Load("Images/button-red22.png");
     else pion = IMG_Load("Images/button-blue22.png");
     SDL_Rect posPion;               
     posPion.x = p.x;

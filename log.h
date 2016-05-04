@@ -14,6 +14,8 @@ void init_plateau(char (*plateau)[TAILLE_MAX]);
 void affiche_plateau(char (*plateau)[TAILLE_MAX]);
 /*Cette fonction renvoie la couleur du joueur qui va joué en premier */
 
+void maj_plateau(char (*plateau)[TAILLE_MAX], int x, int y, char joueur);
+
 int init_joueur();
 
 int rand_a_b();/* return 1 ou 2*/

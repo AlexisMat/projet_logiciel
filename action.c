@@ -19,8 +19,16 @@ int main(int argc, char *argv[])
 	int joueur;
 	char plateau [TAILLE_MAX][TAILLE_MAX];
 	init_plateau(plateau);
+    char couleurJoueur;
+    PileCoup dernierCoup;
+    dernierCoup.c2=-1;
+    dernierCoup.c1=-1;
+    Uint32 background;
 	joueur = init_joueur();
-	printf("Joueur : %d\n",joueur);
+    
+    CoordonneesPlateau cp;
+    if(joueur==1)couleurJoueur='B';
+    else couleurJoueur='R';
 
 
 
@@ -35,7 +43,9 @@ int main(int argc, char *argv[])
     TTF_Init();
 
     //Initialisation et affichage du plateau
-    SDL_Surface *ecran=Afficher_Plateau(NULL, WINHI, WINWI, initflags);
+    SDL_Surface *ecran=Afficher_Plateau(plateau, WINHI, WINWI, initflags);
+    background = SDL_MapRGB(ecran->format,51,51,102);
+    Afficher_joueur(couleurJoueur, background, initflags, ecran);
     SDL_Flip(ecran);
  
  // boucle des évènements
@@ -59,10 +69,89 @@ int main(int argc, char *argv[])
                         int clicX = event.motion.x;
                         int clicY = event.motion.y;
                         CoordonneesSurface c;
-                        CoordonneesPlateau p;
                         c.x=clicX;
                         c.y=clicY;
-                        Placer_Pion(c, 'B', ecran);
+                        switch(position_Clique(c))
+                        {
+                            case NOUVEAU_JEU:
+                                init_plateau(plateau);
+                                joueur = init_joueur();
+    
+                                CoordonneesPlateau cp;
+                                if(joueur==1)couleurJoueur='B';
+                                else couleurJoueur='R';
+                                ecran=Afficher_Plateau(plateau, WINHI, WINWI, initflags);
+                                Afficher_joueur(couleurJoueur, background, initflags, ecran);
+                                dernierCoup.c1=-1;
+                                dernierCoup.c2=-1;
+                                
+                                break;
+
+                            case SAUVEGARDER:
+                                /*FONCTION POUR SAUVEGARDER ICI : */
+
+                                /*FIN*/
+                                break;
+
+                            case CHARGER:
+                                /*FONCTION POUR CHARGER ICI : */
+
+                                /*FIN*/
+                                break;
+
+                            case QUITTER:
+                                /*EST-CE QU'ON SAUVEGARDE ? OUI ? NON ? */
+                                continuer = false;
+                                break;
+
+                            case UNDO:
+                                /*FONCTION POUR ANNULER LE DERNIER COUP ICI : */
+                                if(dernierCoup.c2!=-1)
+                                {
+                                    undo(dernierCoup, plateau);
+                                    Afficher_Plateau(plateau, WINHI, WINWI, initflags);
+                                    Afficher_joueur(couleurJoueur, background, initflags, ecran);
+                                    dernierCoup.c2=-1;
+                                }
+                                /*FIN*/
+                                break;
+
+                            case JOUER:
+                                /*VERIFICATION DE LA VALIDITE DU COUP */
+
+                                /*PION VALIDE, ON LE PLACE */
+                                if(!Placer_Pion(c, couleurJoueur, ecran))
+                                {
+                                    /*AFFECTION DANS LE TABLEAU REPRESENTATIF DE LA GRILLE */
+                                    cp=CoordSurfaceToPlateau(c);
+                                    maj_plateau(plateau, cp.l , cp.c, couleurJoueur);
+                                    /*ON STOCK LE DERNIER COUP DANS LA VARIABLE DERNIER COUP */
+                                    if(dernierCoup.c2=-1)
+                                    {
+                                        dernierCoup.c2=cp.c;
+                                        dernierCoup.l2=cp.l;
+                                        dernierCoup.joueur2=couleurJoueur;
+                                    }
+                                    else
+                                    {
+                                        dernierCoup.c1=dernierCoup.c2;
+                                        dernierCoup.l1=dernierCoup.l2;
+                                        dernierCoup.joueur1=dernierCoup.joueur2;
+                                        dernierCoup.c2=cp.c;
+                                        dernierCoup.l2=cp.l;
+                                        dernierCoup.joueur2=couleurJoueur;
+                                    }
+                                    /*TABLEAU UP*/
+                                    /*ON CHANGE DE TOUR */
+                                    if(couleurJoueur!='B')couleurJoueur='B';
+                                    else couleurJoueur='R';
+                                    Afficher_joueur(couleurJoueur, background, initflags, ecran);
+                                }
+                                
+
+
+
+                        }
                     }
                     break;
                 case SDL_KEYDOWN:
@@ -87,6 +176,7 @@ int main(int argc, char *argv[])
                     }
                     break;
                 case SDL_QUIT:
+                    /*UTILISER LA FONCTION SAUVEGARDER AVANT*/
                     continuer = false;
                     break;
                 default:
