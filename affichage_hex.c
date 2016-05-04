@@ -14,15 +14,40 @@
 
 
 
+void Afficher_Bouton(int posx, int posy, char* bouton,  Uint32 initflags, SDL_Surface *ecran)
+{
+    SDL_Surface *surface_bouton, *texte1;
+    SDL_Rect posTexte1, position;
+    position.x=posx;
+    posTexte1.x=position.x+5;
+    posTexte1.y=position.y+5;
 
 
+    Uint8  video_bpp = 32; // 32 bits de couleur
+    Uint32 rouge;
+    rouge = SDL_MapRGB(ecran->format,255,0,0); // c'est du rouge
+    
+    TTF_Font *fontsurface_bouton = TTF_OpenFont("CAC-Champagne/cac_champagne.ttf",40); 
+    SDL_Color fontBlack = {0,0,0};
+    texte1 = TTF_RenderText_Blended(fontsurface_bouton,bouton,fontBlack);
+
+    surface_bouton = SDL_CreateRGBSurface(initflags,150,50,video_bpp,0,0,0,0); 
+    SDL_FillRect(surface_bouton,NULL,rouge);
+
+    SDL_BlitSurface(surface_bouton, NULL, ecran, &position);
+    SDL_BlitSurface(texte1, NULL, ecran, &posTexte1);
+    SDL_FreeSurface(texte1);
+    SDL_FreeSurface(surface_bouton);
+    TTF_CloseFont(fontsurface_bouton);
+
+}
 
 
 
 SDL_Surface* Afficher_Plateau(char** grille, int dimX, int dimY, Uint32 initflags)
 {
     
-    SDL_Surface *ecran, *rectangle, *board, *texte1; // quelques surfaces
+    SDL_Surface *ecran, *board; // quelques surfaces
 
     Dimensions fenetre; // main window
    
@@ -33,7 +58,7 @@ SDL_Surface* Afficher_Plateau(char** grille, int dimX, int dimY, Uint32 initflag
 
     Uint32 videoflags = SDL_HWSURFACE; // utiliser la mémoire vidéo
 
-    Uint32 vert, rouge; // des variables pour des couleurs   
+    Uint32 vert; // des variables pour des couleurs   
  
     /* Set video mode */
     ecran = SDL_SetVideoMode(fenetre.w, fenetre.h, video_bpp, videoflags); // surface principale
@@ -46,32 +71,12 @@ SDL_Surface* Afficher_Plateau(char** grille, int dimX, int dimY, Uint32 initflag
     }
 
     vert = SDL_MapRGB(ecran->format,0,128,0); // c'est du vert
-    rouge = SDL_MapRGB(ecran->format,255,0,0); // c'est du rouge
+    
 
     SDL_FillRect(ecran,NULL,vert); // de la couleur dans le fond de la fenêtre principale
     SDL_WM_SetCaption("Jeu de Hex", NULL); // legende de la fenêtre
 
-    // Une autre surface avec du texte
-
-    
-    TTF_Font *fontMenu = TTF_OpenFont("CAC-Champagne/cac_champagne.ttf",60); // charger une fonte (un peu moche)
-    SDL_Color fontBlack = {0,0,0};
-    texte1 = TTF_RenderText_Blended(fontMenu,"Hello guys !",fontBlack);
-
-    // encore une surface
-    rectangle = SDL_CreateRGBSurface(initflags,225,80,video_bpp,0,0,0,0); // une autre surface pour inclure dans l'autre
-    SDL_FillRect(rectangle,NULL,rouge); // un fond rouge
-
-    // position des surfaces
-    SDL_Rect posRect, posTexte1;
-    posRect.x = 20;
-    posRect.y = 80;
-
-    posTexte1.x = 25;
-    posTexte1.y = 85;
-
-    SDL_BlitSurface(rectangle,NULL,ecran,&posRect); // on associe avec la fenêtre principale
-    SDL_BlitSurface(texte1,NULL,ecran,&posTexte1); // idem pour superposer avec la précédente
+    Afficher_Bouton(20, 80, "NEW", initflags, ecran);
 
     // Affichage du plateau de jeu
     board = IMG_Load("Images/hex.png");    // plateau de jeu la taille en pixels est celle de l'image
@@ -81,13 +86,15 @@ SDL_Surface* Afficher_Plateau(char** grille, int dimX, int dimY, Uint32 initflag
     SDL_BlitSurface(board,NULL,ecran,&posBoard); // on l'associe avec la surface principale
 
     /* Clean up the SDL library */
-    SDL_FreeSurface(rectangle);
     SDL_FreeSurface(board);
-    TTF_CloseFont(fontMenu);
-    SDL_FreeSurface(texte1);
 
     return ecran;
 }
+
+
+
+
+
 
 void Afficher_Pion(CoordonneesSurface p, char joueur, SDL_Surface *ecran)
 {
