@@ -18,4 +18,6 @@ int init_joueur();
 
 int rand_a_b();/* return 1 ou 2*/
 
+void save(char (*plateau)[TAILLE_MAX]);
+
 #endif

@@ -36,3 +36,23 @@ int init_joueur(){
 	int j;
 	return (j=rand_a_b());
 }
+
+void save(char (*plateau)[TAILLE_MAX]){
+	FILE *save = NULL;
+	char hexa;
+	int i,j;
+	save = fopen("save.txt","w+");
+	if (save == NULL){
+		fprintf(stderr,"Error de sauvegard\n");
+		exit (1);
+	}
+	fputs("\\hex\n\\board\n",save);
+		for(i=0;i<TAILLE_MAX;i++){
+			for(j=0;j<TAILLE_MAX;j++){
+				hexa = plateau[i][j];
+				fputc(hexa,save);
+				fputc('\n',save);
+			}	
+		}
+	fputs("\\endboard\n\\endhex\n",save);
+}
