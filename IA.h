@@ -1,5 +1,5 @@
-#ifndef hex
-#define hex
+#ifndef IA
+#define IA
 
 #include "affichage_hex.h"
 

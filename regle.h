@@ -1,5 +1,5 @@
-#ifndef hex
-#define hex
+#ifndef regle
+#define regle
 
 #include <stdbool.h>
 #include "menu.h"

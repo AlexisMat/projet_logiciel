@@ -10,7 +10,6 @@
 #include <SDL/SDL_ttf.h>
 
 #include "IA.h"
-#include "log.h"
 
 
 

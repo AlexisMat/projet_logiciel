@@ -1,5 +1,5 @@
-#ifndef hex
-#define hex
+#ifndef log
+#define log
 
 
 

@@ -1,5 +1,5 @@
-#ifndef hex
-#define hex
+#ifndef menu
+#define menu
 
 #include "log.h"
 

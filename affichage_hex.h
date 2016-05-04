@@ -1,5 +1,5 @@
-#ifndef hex
-#define hex
+#ifndef affichage
+#define affichage
 
 #include <SDL/SDL.h>
 #include <SDL/SDL_keysym.h>

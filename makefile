@@ -20,7 +20,7 @@ $regle.o: $regle.c
 	${CPP} $(CFLAGS) -o regle.o -c $regle.c ${LDFLAGS}
 
 $affichage_hex.o: $affichage_hex.c
-	${CPP} $(CFLAGS) -o $affichage_hex.o -c $affichage_hex.c ${LDFLAGS}
+	${CPP} $(CFLAGS) -o affichage_hex.o -c $affichage_hex.c ${LDFLAGS}
 
 $IA.o: $IA.c
 	${CPP} $(CFLAGS) -o IA.o -c $IA.c ${LDFLAGS}
