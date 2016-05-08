@@ -5,15 +5,6 @@
 
 #define TAILLE_MAX 11
 
-typedef struct 
-{
-	int c1,l1, c2, l2;
-	char joueur1, joueur2;
-}PileCoup;
-
-void undo(PileCoup dernierCoup, char (*plateau)[TAILLE_MAX]);
-
-
 
 
 /*Cette fonction renvoie un plateau vide*/

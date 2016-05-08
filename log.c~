@@ -118,4 +118,4 @@ void save(char (*plateau)[TAILLE_MAX],PileCoup p,FILE *sauvegarde){
 		}
 	}
 }
-*/	
+	
